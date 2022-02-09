@@ -1,0 +1,13 @@
+name = "MeshPlotter"
+uuid = "badd6c13-c8c8-43ed-91ee-8f0dd6486d3a"
+authors = ["ArjunNarayanan <arjun.narayanan91@gmail.com> and contributors"]
+version = "0.1.0"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
