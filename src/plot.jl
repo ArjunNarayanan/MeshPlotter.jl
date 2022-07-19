@@ -1,4 +1,4 @@
-function plot!(ax, m::Mesh; d0 = m.d, vertex_score = true)
+function plot_mesh!(ax, m; d0 = m.d, vertex_score = true)
     ax.clear()
     ax.set_aspect("equal")
     ax.axis("off")
@@ -40,8 +40,8 @@ function plot!(ax, m::Mesh; d0 = m.d, vertex_score = true)
     end
 end
 
-function PyPlot.plot(m::Mesh; d0 = m.d, vertex_score = true)
+function plot_mesh(m; d0 = m.d, vertex_score = true)
     fig, ax = PyPlot.subplots()
-    plot!(ax, m, d0 = d0, vertex_score = vertex_score)
+    plot_mesh!(ax, m, d0 = d0, vertex_score = vertex_score)
     return fig, ax
 end
