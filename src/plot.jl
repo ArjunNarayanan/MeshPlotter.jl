@@ -23,7 +23,7 @@ function plot_node_numbers!(ax, points; size=400)
         points[:, 1],
         points[:, 2],
         s=size,
-        color="white",
+        facecolors="white",
         edgecolors="black"
     )
     for (idx, point) in enumerate(eachrow(points))
