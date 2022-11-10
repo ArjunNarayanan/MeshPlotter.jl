@@ -1,7 +1,8 @@
 function plot_mesh!(ax, points, connectivity)
+    connectivity = connectivity'
     ax.tripcolor(
-        points[:, 1],
-        points[:, 2],
+        points[1, :],
+        points[2, :],
         connectivity .- 1,
         0 * connectivity[:, 1],
         cmap="Set3",
