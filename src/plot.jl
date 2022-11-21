@@ -1,30 +1,35 @@
-function plot_mesh!(ax, points, connectivity)
-    connectivity = connectivity'
+function single_color_cmap(rgb::Vector{Float64})
+    args = [(t, v, v) for t = 0.0:1.0, v in rgb]
+    ColorMap("", args[:, 1], args[:, 2], args[:, 3])
+end
+
+
+function plot_mesh!(ax, points, connectivity; elem_color=[0.8, 1.0, 0.8],)
     ax.tripcolor(
         points[1, :],
         points[2, :],
         connectivity .- 1,
         0 * connectivity[:, 1],
-        cmap="Set3",
+        cmap=single_color_cmap(elem_color),
         edgecolors="k",
         linewidth=1,
         facecolor="g",
     )
 end
 
-function plot_node_numbers!(ax, points; size=400)
+function plot_node_numbers!(ax, points, fontsize; size=600)
     tpars = Dict(
-        :color => "k",
+        :color => "white",
         :horizontalalignment => "center",
         :verticalalignment => "center",
         :fontfamily => "sans-serif",
-        :fontsize => 10,
+        :fontsize => fontsize,
     )
     ax.scatter(
         points[:, 1],
         points[:, 2],
         s=size,
-        facecolors="white",
+        color="white",
         edgecolors="black"
     )
     for (idx, point) in enumerate(eachrow(points))
@@ -32,13 +37,13 @@ function plot_node_numbers!(ax, points; size=400)
     end
 end
 
-function plot_elem_numbers!(ax, points, connectivity)
+function plot_elem_numbers!(ax, points, connectivity, fontsize)
     tpars = Dict(
         :color => "k",
         :horizontalalignment => "center",
         :verticalalignment => "center",
         :fontfamily => "sans-serif",
-        :fontsize => 10,
+        :fontsize => fontsize,
     )
     for (idx, nodes) in enumerate(eachrow(connectivity))
         npts = size(connectivity, 2)
@@ -59,12 +64,12 @@ function plot_element_internal_order!(ax, points, tpars; scale=0.25)
     end
 end
 
-function plot_internal_order!(ax, points, connectivity)
+function plot_internal_order!(ax, points, connectivity, fontsize)
     tpars = Dict(
         :color => "r",
         :horizontalalignment => "center",
         :verticalalignment => "center",
-        :fontsize => 12,
+        :fontsize => fontsize,
         :fontweight => "bold",
     )
 
@@ -74,20 +79,20 @@ function plot_internal_order!(ax, points, connectivity)
     end
 end
 
-function plot_vertex_score!(ax, points, vertex_score)
+function plot_vertex_score!(ax, points, vertex_score, fontsize, vertex_size)
     @assert length(vertex_score) == size(points, 1)
 
     neg_mask = vertex_score .< 0
-    ax.scatter(points[neg_mask, 1], points[neg_mask, 2], 450, color="r")
+    ax.scatter(points[neg_mask, 1], points[neg_mask, 2], s = vertex_size, color="r")
 
     pos_mask = vertex_score .> 0
-    ax.scatter(points[pos_mask, 1], points[pos_mask, 2], 450, color="m")
+    ax.scatter(points[pos_mask, 1], points[pos_mask, 2], s = vertex_size, color="m")
 
     tpars = Dict(
         :color => "w",
         :horizontalalignment => "center",
         :verticalalignment => "center",
-        :fontsize => 12,
+        :fontsize => fontsize,
         :fontweight => "bold",
     )
 
@@ -105,37 +110,38 @@ function plot_vertex_score!(ax, points, vertex_score)
 end
 
 function plot_mesh(points, connectivity; vertex_score=[],
-    node_numbers = false,
-    elem_numbers = false,
+    number_vertices = false,
+    number_elements = false,
     internal_order = false,
-    figsize=10,
-    filename="")
+    figsize=15,
+    fontsize = 20,
+    elem_color=[0.8, 1.0, 0.8],
+    vertex_size = 20)
 
+    points = Array(points')
+    connectivity = Array(connectivity')
+    
     fig, ax = PyPlot.subplots(figsize=(figsize, figsize))
 
     ax.set_aspect("equal")
     ax.axis("off")
 
-    plot_mesh!(ax, points, connectivity)
+    plot_mesh!(ax, points, connectivity, elem_color = elem_color)
 
-    if node_numbers
-        plot_node_numbers!(ax, points)
+    if number_vertices
+        plot_node_numbers!(ax, points, fontsize, size = vertex_size^2)
     end
 
-    if elem_numbers
-        plot_elem_numbers!(ax, points, connectivity)
+    if number_elements
+        plot_elem_numbers!(ax, points, connectivity, fontsize)
     end
 
     if internal_order
-        plot_internal_order!(ax, points, connectivity)
+        plot_internal_order!(ax, points, connectivity, fontsize)
     end
 
     if length(vertex_score) > 0
-        plot_vertex_score!(ax, points, vertex_score)
-    end
-
-    if length(filename) > 0
-        fig.savefig(filename)
+        plot_vertex_score!(ax, points, vertex_score, fontsize, vertex_size^2)
     end
 
     return fig
