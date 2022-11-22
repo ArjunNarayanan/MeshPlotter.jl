@@ -13,4 +13,4 @@ connectivity = [1  2  4
                 2  3  4]
 mesh = TM.Mesh(Array(points'), Array(connectivity'))
 
-MP.plot_mesh(mesh.p, mesh.t, node_numbers = true, elem_numbers=true)
+MP.plot_mesh(TM.active_vertex_coordinates(mesh), TM.active_triangle_connectivity(mesh))

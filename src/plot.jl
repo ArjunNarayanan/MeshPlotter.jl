@@ -6,8 +6,8 @@ end
 
 function plot_mesh!(ax, points, connectivity; elem_color=[0.8, 1.0, 0.8],)
     ax.tripcolor(
-        points[1, :],
-        points[2, :],
+        points[:, 1],
+        points[:, 2],
         connectivity .- 1,
         0 * connectivity[:, 1],
         cmap=single_color_cmap(elem_color),
@@ -29,7 +29,7 @@ function plot_node_numbers!(ax, points, fontsize; size=600)
         points[:, 1],
         points[:, 2],
         s=size,
-        color="white",
+        color="black",
         edgecolors="black"
     )
     for (idx, point) in enumerate(eachrow(points))
@@ -45,8 +45,8 @@ function plot_elem_numbers!(ax, points, connectivity, fontsize)
         :fontfamily => "sans-serif",
         :fontsize => fontsize,
     )
+    npts = size(connectivity, 2)
     for (idx, nodes) in enumerate(eachrow(connectivity))
-        npts = size(connectivity, 2)
         pc = sum(points[nodes, :], dims=1) / npts
         ax.text(pc[1], pc[2], "$idx"; tpars...)
     end
@@ -83,10 +83,10 @@ function plot_vertex_score!(ax, points, vertex_score, fontsize, vertex_size)
     @assert length(vertex_score) == size(points, 1)
 
     neg_mask = vertex_score .< 0
-    ax.scatter(points[neg_mask, 1], points[neg_mask, 2], s = vertex_size, color="r")
+    ax.scatter(points[1, neg_mask], points[2, neg_mask], s = vertex_size, color="r")
 
     pos_mask = vertex_score .> 0
-    ax.scatter(points[pos_mask, 1], points[pos_mask, 2], s = vertex_size, color="m")
+    ax.scatter(points[1, pos_mask], points[2, pos_mask], s = vertex_size, color="m")
 
     tpars = Dict(
         :color => "w",
@@ -97,7 +97,7 @@ function plot_vertex_score!(ax, points, vertex_score, fontsize, vertex_size)
     )
 
 
-    for (i, point) in enumerate(eachrow(points))
+    for (i, point) in enumerate(each(points))
         vs = vertex_score[i]
         if vs != 0
             txt = string(vs)
