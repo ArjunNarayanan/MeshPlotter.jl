@@ -83,10 +83,10 @@ function plot_vertex_score!(ax, points, vertex_score, fontsize, vertex_size)
     @assert length(vertex_score) == size(points, 1)
 
     neg_mask = vertex_score .< 0
-    ax.scatter(points[1, neg_mask], points[2, neg_mask], s = vertex_size, color="r")
+    ax.scatter(points[neg_mask, 1], points[neg_mask, 2], s = vertex_size, color="r")
 
     pos_mask = vertex_score .> 0
-    ax.scatter(points[1, pos_mask], points[2, pos_mask], s = vertex_size, color="m")
+    ax.scatter(points[pos_mask, 1], points[pos_mask, 2], s = vertex_size, color="m")
 
     tpars = Dict(
         :color => "w",
@@ -97,7 +97,7 @@ function plot_vertex_score!(ax, points, vertex_score, fontsize, vertex_size)
     )
 
 
-    for (i, point) in enumerate(each(points))
+    for (i, point) in enumerate(eachrow(points))
         vs = vertex_score[i]
         if vs != 0
             txt = string(vs)
@@ -141,6 +141,7 @@ function plot_mesh(points, connectivity; vertex_score=[],
     end
 
     if length(vertex_score) > 0
+        @assert length(vertex_score) == size(points, 1)
         plot_vertex_score!(ax, points, vertex_score, fontsize, vertex_size^2)
     end
 
