@@ -145,5 +145,5 @@ function plot_mesh(points, connectivity; vertex_score=[],
         plot_vertex_score!(ax, points, vertex_score, fontsize, vertex_size^2)
     end
 
-    return fig
+    return fig, ax
 end
