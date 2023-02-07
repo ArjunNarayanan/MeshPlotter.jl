@@ -17,7 +17,9 @@ function plot_mesh!(ax, points, connectivity; elem_color=[0.8, 1.0, 0.8],)
     )
 end
 
-function plot_node_numbers!(ax, points, fontsize; size=600)
+function plot_node_numbers!(ax, points, node_numbers, fontsize; size=600)
+    @assert size(points, 1) == length(node_numbers)
+
     tpars = Dict(
         :color => "white",
         :horizontalalignment => "center",
@@ -33,11 +35,13 @@ function plot_node_numbers!(ax, points, fontsize; size=600)
         edgecolors="black"
     )
     for (idx, point) in enumerate(eachrow(points))
-        ax.text(point[1], point[2], "$idx"; tpars...)
+        node_id = node_numbers[idx]
+        ax.text(point[1], point[2], string(node_id); tpars...)
     end
 end
 
-function plot_elem_numbers!(ax, points, connectivity, fontsize)
+function plot_elem_numbers!(ax, points, connectivity, element_numbers, fontsize)
+    @assert size(connectivity, 1) == length(element_numbers)
     tpars = Dict(
         :color => "k",
         :horizontalalignment => "center",
@@ -47,8 +51,9 @@ function plot_elem_numbers!(ax, points, connectivity, fontsize)
     )
     npts = size(connectivity, 2)
     for (idx, nodes) in enumerate(eachrow(connectivity))
+        elem_id = element_numbers[idx]
         pc = sum(points[nodes, :], dims=1) / npts
-        ax.text(pc[1], pc[2], "$idx"; tpars...)
+        ax.text(pc[1], pc[2], "$elem_id"; tpars...)
     end
 end
 
@@ -109,7 +114,9 @@ function plot_vertex_score!(ax, points, vertex_score, fontsize, vertex_size)
     end
 end
 
-function plot_mesh(points, connectivity; vertex_score=[],
+
+function plot_mesh(points, connectivity; 
+    vertex_score=[],
     number_vertices = false,
     number_elements = false,
     internal_order = false,
@@ -128,12 +135,18 @@ function plot_mesh(points, connectivity; vertex_score=[],
 
     plot_mesh!(ax, points, connectivity, elem_color = elem_color)
 
-    if number_vertices
-        plot_node_numbers!(ax, points, fontsize, size = vertex_size^2)
+    if number_vertices isa Bool && number_vertices
+        node_numbers = 1:size(points, 2)
+        plot_node_numbers!(ax, points, node_numbers, fontsize, size = vertex_size^2)
+    elseif number_vertices isa Vector
+        plot_node_numbers!(ax, points, number_vertices, fontsize, size = vertex_size^2)
     end
 
-    if number_elements
-        plot_elem_numbers!(ax, points, connectivity, fontsize)
+    if number_elements isa Bool && number_elements
+        element_numbers = 1:size(connectivity, 2)
+        plot_elem_numbers!(ax, points, connectivity, element_numbers, fontsize)
+    elseif number_elements isa Vector
+        plot_elem_numbers!(ax, points, connectivity, number_elements, fontsize)
     end
 
     if internal_order
