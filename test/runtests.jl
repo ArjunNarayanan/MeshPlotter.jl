@@ -1,6 +1,13 @@
-# using MeshPlotter
-# using Test
+using Revise
+using MeshPlotter
 
-# @testset "MeshPlotter.jl" begin
-#     # Write your tests here.
-# end
+points = [
+    0.0 1.0 2.0
+    0.0 1.0 0.0
+]
+
+connectivity = [
+    1
+    3
+    2
+]

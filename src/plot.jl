@@ -18,7 +18,8 @@ function plot_mesh!(ax, points, connectivity; elem_color=[0.8, 1.0, 0.8],)
 end
 
 function plot_node_numbers!(ax, points, node_numbers, fontsize; size=600)
-    @assert size(points, 1) == length(node_numbers)
+    
+    @assert size(points, 2) == length(node_numbers)
 
     tpars = Dict(
         :color => "white",
