@@ -19,7 +19,9 @@ end
 
 function plot_node_numbers!(ax, points, node_numbers, fontsize; size=600)
     
-    @assert size(points, 2) == length(node_numbers)
+    # @assert size(points, 1) == length(node_numbers)
+    println("Num nodes : ", length(node_numbers))
+    println("Node numbers : ", node_numbers)
 
     tpars = Dict(
         :color => "white",
@@ -137,14 +139,14 @@ function plot_mesh(points, connectivity;
     plot_mesh!(ax, points, connectivity, elem_color = elem_color)
 
     if number_vertices isa Bool && number_vertices
-        node_numbers = 1:size(points, 2)
+        node_numbers = 1:size(points, 1)
         plot_node_numbers!(ax, points, node_numbers, fontsize, size = vertex_size^2)
     elseif number_vertices isa Vector
         plot_node_numbers!(ax, points, number_vertices, fontsize, size = vertex_size^2)
     end
 
     if number_elements isa Bool && number_elements
-        element_numbers = 1:size(connectivity, 2)
+        element_numbers = 1:size(connectivity, 1)
         plot_elem_numbers!(ax, points, connectivity, element_numbers, fontsize)
     elseif number_elements isa Vector
         plot_elem_numbers!(ax, points, connectivity, number_elements, fontsize)
